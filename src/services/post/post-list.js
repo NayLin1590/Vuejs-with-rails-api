@@ -37,6 +37,7 @@ export default {
             ],
             postList: [],
             showList: [],
+            searchValue: null
         };
     },
     computed: {
@@ -50,7 +51,6 @@ export default {
         },
     },
     mounted() {
-
         this.$axios
             .get("/api/applicants")
             .then((response) => {
@@ -67,15 +67,18 @@ export default {
          * @returns void
          */
         filterPosts() {
-            this.showList = this.postList.filter((post) => {
-                return (
-                    post.id.includes(this.keyword) ||
-                    post.name.includes(this.keyword) ||
-                    post.phone_no1.includes(this.keyword) ||
-                    post.balchelorUni.includes(this.keyword) ||
-                    post.jobExperience.includes(this.keyword)
-                );
-            });
+            if(this.searchValue){
+                this.showList = this.postList.filter((post) => {
+                    return (
+                        // console.log(post.id)
+                        post.name.toLowerCase().includes(this.searchValue)||
+                        post.bachelorUni.toLowerCase().includes(this.searchValue) 
+                    );
+                });
+            }else {
+                this.showList = this.postList;
+            }
+           
         },
         DeleteUser(id) {
             if (confirm("Do you really want to delete?")) {

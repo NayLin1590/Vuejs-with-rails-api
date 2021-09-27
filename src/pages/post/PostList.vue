@@ -3,15 +3,15 @@
     <v-card-title>
         Applicant list
         <v-spacer></v-spacer>
-        <v-form ref="form">
+        <v-form ref="form" @submit.prevent="filterPosts">
             <v-row class="filter-bar">
                 <v-col md="2.5" class="mr-5">
-                    <v-text-field label="Search keyword" hide-details="auto"></v-text-field>
+                    <v-text-field label="Search keyword" @change="filterPosts" v-model="searchValue" hide-details="auto"></v-text-field>
                 </v-col>
-                <!-- <v-btn class="post-list-btn mr-4" color="primary">Filter</v-btn>
+                <v-btn type="submit" class="post-list-btn mr-4" color="primary">Filter</v-btn>
                 <v-btn class="post-list-btn mr-4" color="primary">Create</v-btn>
                 <v-btn class="post-list-btn mr-4" color="primary">Upload</v-btn>
-                <v-btn class="post-list-btn mr-4" color="primary">Download</v-btn> -->
+                <v-btn class="post-list-btn mr-4" color="primary">Download</v-btn>
             </v-row>
         </v-form>
     </v-card-title>

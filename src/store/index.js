@@ -68,7 +68,6 @@ export default new Vuex.Store({
                     router.push({ name: "confirm" });
                 })
                 .catch((err)=>{
-                    // console.log(err.response.data);
                     commit("setValidateError", err.response.data);
                 })
         },

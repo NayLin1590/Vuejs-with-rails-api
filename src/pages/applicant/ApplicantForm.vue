@@ -12,9 +12,11 @@
               <v-text-field v-model="user.name" :counter="50" :error-messages="errors" label="Name" required>
               </v-text-field>
             </validation-provider>
-            <v-file-input v-model="user.profilePhoto" chips truncate-length="20" prepend-icon=""
-              accept="image/png, image/jpeg, image/bmp" label="Profile Photo" @change="onAddFiles"></v-file-input>
 
+            <validation-provider v-slot="{ errors }" name="profilePhoto" rules="image">
+              <v-file-input v-model="user.profilePhoto" :error-messages="errors" chips truncate-length="20" prepend-icon=""
+                accept="image/png, image/jpeg, image/bmp" label="Profile Photo" @change="onAddFiles"></v-file-input>
+             </validation-provider>  
             <div>
               <v-menu ref="menu" v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y
                 min-width="auto">
@@ -202,7 +204,8 @@
     email,
     max,
     regex,
-    numeric
+    numeric,
+    image
   } from 'vee-validate/dist/rules'
   import {
     extend,
@@ -217,7 +220,10 @@
     ...digits,
     message: '{_field_} needs to be {length} digits. ({_value_})',
   })
-
+  extend("image", {
+    ...image,
+    message: '{_field_} please select img type'
+  })
   extend('required', {
     ...required,
     message: '{_field_} can not be empty',
@@ -290,7 +296,8 @@
       },
       submit() {
 
-        // console.log(this.profilePhoto),
+        // console.log(this.user.profilePhoto.type)
+        // this.user.profilePhoto = this.user.profilePhoto.type
         this.$refs.observer.validate()
         this.$store.dispatch("confirm", this.user)
           .then(() => {
