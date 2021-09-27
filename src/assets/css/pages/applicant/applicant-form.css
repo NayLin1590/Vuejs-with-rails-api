@@ -1,0 +1,12 @@
+.errorMsg {
+  background: rgb(255, 108, 108);
+  color: white;
+  width: 90%;
+  margin: 0 auto;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+.errorMsg p {
+  padding: 5px;
+}

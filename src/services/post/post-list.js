@@ -1,7 +1,7 @@
 import {
     mapGetters
 } from "vuex";
-import axios from "axios"
+import axios from "axios";
 export default {
     data() {
         return {
@@ -37,7 +37,7 @@ export default {
             ],
             postList: [],
             showList: [],
-            searchValue: null
+            searchValue: null,
         };
     },
     computed: {
@@ -51,55 +51,63 @@ export default {
         },
     },
     mounted() {
-        this.$axios
-            .get("/api/applicants")
-            .then((response) => {
-                this.postList = response.data;
-                this.showList = this.postList;
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        this.SelectAll();
     },
     methods: {
         /**
          * This is to filter posts of datatable.
+         * {string} searchValue The Keywork to search
          * @returns void
          */
         filterPosts() {
-            if(this.searchValue){
+            if (this.searchValue) {
                 this.showList = this.postList.filter((post) => {
                     return (
-                        // console.log(post.id)
-                        post.name.toLowerCase().includes(this.searchValue)||
-                        post.bachelorUni.toLowerCase().includes(this.searchValue) 
+                        post.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+                        post.bachelorUni
+                        .toLowerCase()
+                        .includes(this.searchValue.toLowerCase())
                     );
                 });
-            }else {
+            } else {
                 this.showList = this.postList;
             }
-           
         },
+        /**
+         * DeleteUser
+         * This is to delete the applicant
+         * @param {id} id The applicant id to delete
+         * @returns void
+         */
         DeleteUser(id) {
             if (confirm("Do you really want to delete?")) {
-                axios.delete('/api/applicants/delete?id=' + id)
-                    .then(resp => {
+                axios
+                    .delete("/api/applicants/delete?id=" + id)
+                    .then((resp) => {
                         if (resp) {
-                            this.$axios
-                                .get("/api/applicants")
-                                .then((response) => {
-                                    this.postList = response.data;
-                                    this.showList = this.postList;
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                });
+                            this.SelectAll();
                         }
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         console.log(error);
-                    })
+                    });
             }
+        },
+        /**
+         * SelectAll()
+         * This is to read all applicants from database.
+         * @returns void
+         */
+        SelectAll() {
+            this.$axios
+                .get("/api/applicants")
+                .then((response) => {
+                    this.postList = response.data;
+                    this.showList = this.postList;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         },
     },
 };

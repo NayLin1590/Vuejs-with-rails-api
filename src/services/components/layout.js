@@ -11,6 +11,7 @@ export default {
         ...mapGetters(["isLoggedIn", "userType", "userName"]),
     },
     methods: {
+      
         /**
          * This is to log out from system.
          * @returns void

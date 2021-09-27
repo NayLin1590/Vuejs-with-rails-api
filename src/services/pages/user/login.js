@@ -1,4 +1,3 @@
-
 export default {
     data: () => ({
         valid: true,
@@ -15,7 +14,7 @@ export default {
         // validation rules for password.
         pwdRules: [value => !!value || "The password field is required."]
     }),
-    
+
     methods: {
         /**
          * This to submit login form.
@@ -29,14 +28,13 @@ export default {
                 })
                 .then(() => {
                     this.error = this.$store.state.errMsg;
-                    this.$router.push({ name: "post-list" });
+                    this.$router.push({
+                        name: "post-list"
+                    });
                 })
-                .catch(err => {    
-                    this.error = "error testing";              
+                .catch(err => {
+                    this.error = "error testing";
                     this.error = err.response.data.errors.message;
-                    
-                    // console.log(err)
-                    // this.error = "error message"
                 });
         }
     },

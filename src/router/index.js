@@ -14,12 +14,12 @@ Vue.use(VueRouter);
 
 const routes = [
     {
-        path: "/post/list",
+        path: "/post",
         name: "post-list",
         component: PostList,
     },
     {
-        path: "/post/list/detail/:id",
+        path: "/post/:id",
         name: "post-detail",
         component: PostDetail,
     },
@@ -47,8 +47,8 @@ const routes = [
     
     {
         path: "/*",
-        redirect: "/post/list",
-    },
+        redirect: "/post",
+    }
    
 ];
 
@@ -74,7 +74,7 @@ router.beforeEach((to, from, next) => {
     }
     next();
     if(loggedIn && to.name == "applicantform"){
-        return next("/post/list")
+        return next("/post")
     }
     next();
     

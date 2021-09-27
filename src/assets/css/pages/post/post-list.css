@@ -1,23 +1,27 @@
 .filter-bar {
     padding: 0px 10px;
 }
+
 a {
-  text-decoration: none;
+    text-decoration: none;
 }
+
 .post-list-btn {
     margin: auto;
 }
+
 .post-detail-btn {
-  display: inline-block;
-  padding: 7px 20px;
-  background-color: rgba(0, 60, 255, 0.924);
-  color: white;
-  border-radius: 5px;
-  font-weight: bolder;
-  letter-spacing: .5px;
+    display: inline-block;
+    padding: 7px 20px;
+    background-color: rgba(0, 60, 255, 0.924);
+    color: white;
+    border-radius: 5px;
+    font-weight: bolder;
+    letter-spacing: 0.5px;
 }
+
 .post-list-btn:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .operation-btn {
@@ -25,8 +29,5 @@ a {
 }
 
 .detail-row {
-  height: 30px;
+    height: 30px;
 }
-
-
-

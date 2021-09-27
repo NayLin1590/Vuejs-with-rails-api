@@ -1,0 +1,26 @@
+.r-side {
+  background-color: rgb(109, 109, 109);
+  position: relative;
+}
+
+.custom-img {
+  border-radius: 50%;
+  border: 3px solid rgb(0, 140, 255);
+}
+
+.h3-custom {
+  padding: 3px;
+  letter-spacing: 5px;
+  background-color: rgb(0, 140, 255);
+}
+
+.p-custom {
+  color: white;
+  padding: 3px 0;
+  border: 2px solid rgb(0, 140, 255);
+  border-radius: 5px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: none;
+}

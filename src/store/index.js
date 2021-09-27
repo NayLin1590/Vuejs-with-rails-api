@@ -2,8 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import createPersistedState from "vuex-persistedstate";
-import router from '../router' 
-// import VueRouter from "vue-router";
+import router from "../router";
 
 Vue.use(Vuex);
 
@@ -21,83 +20,122 @@ export default new Vuex.Store({
         setUserData(state, userData) {
             state.user = userData;
         },
-        setErrorData(state, errMsg){
+        setErrorData(state, errMsg) {
             state.errMsg = errMsg;
         },
-        setApplicantData(state, applicantsData){
-            state.applicantsData = applicantsData
+        setApplicantData(state, applicantsData) {
+            state.applicantsData = applicantsData;
         },
-        setValidateError(state, error){
-            state.userValidationErrors = error
+        setValidateError(state, error) {
+            state.userValidationErrors = error;
         },
-        setImgFile(state , imgFile){
+        setImgFile(state, imgFile) {
             state.imgFile = imgFile;
-        }
-        ,
-        appendPost(state, imgFile){
-            state.imgFile = imgFile
-        }
+        },
     },
 
     actions: {
-        createPost({ commit }, formData) {
+        /**
+         * createApplicant
+         * This is to create applicant and push route to 'done'
+         * @param {object} formData the applicant value to save
+         * @return
+         */
+        createApplicant({
+            commit
+        }, formData) {
             try {
-            return axios.post("/api/applicants/create",  formData)
-                .then(data =>{
-                    if(data){
-                        router.push({ name: "done" });
-                    
-                        commit("setApplicantData", null);
-                        commit("setImgFile",null)
-                    }               
-                })
-                .catch(err=>{
-                    console.log(err)       
-                });         
-            
+                return axios
+                    .post("/api/applicants/create", formData)
+                    .then((data) => {
+                        if (data) {
+                            router.push({
+                                name: "done",
+                            });
+                            commit("setApplicantData", null);
+                            commit("setImgFile", null);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             } catch (e) {
-            console.error(e);
+                console.error(e);
             }
         },
-        confirm({ commit }, userData){
-            return axios.post("api/applicants/confirm" , userData)
-                .then(data => {
-                    if(data){
-                        commit("setApplicantData",userData)
+        /**
+         * confirm
+         * this is to confirm applicant data before save and push route to confirm
+         * @param {object} applicantData the all info of submit applicant
+         * @return
+         */
+        confirm({
+            commit
+        }, applicantData) {
+            return axios
+                .post("api/applicants/confirm", applicantData)
+                .then((data) => {
+                    if (data) {
+                        commit("setApplicantData", applicantData);
+                        commit("setValidateError", null);
                     }
-                    router.push({ name: "confirm" });
+                    router.push({
+                        name: "confirm",
+                    });
                 })
-                .catch((err)=>{
+                .catch((err) => {
                     commit("setValidateError", err.response.data);
+                });
+        },
+        /**
+         * imgFile
+         * this is to store img file to the stae
+         * @param {object} imgFile the img file of user
+         * @return
+         */
+        imgFile({
+            commit
+        }, imgFile) {
+            commit("setImgFile", imgFile);
+        },
+        /**
+         * login
+         * @return
+         */
+        login({
+            commit
+        }, credentials) {
+            return axios
+                .post("/auth/login", credentials)
+                .then((data) => {
+                    this.errMsg = null;
+                    commit("setUserData", data);
                 })
+                .catch((err) => {
+                    commit("setErrorData", err.response.data.error);
+                });
         },
-        
-        //Read all
-
-        imgFile({ commit }, imgFile){
-            commit("setImgFile",imgFile)
+        /**
+         * Logout
+         * @return
+         */
+        logout({
+            commit
+        }) {
+            commit("setUserData", null);
+            commit("setErrorData", null);
         },
-        login({ commit }, credentials) {
-            return axios.post("/auth/login", credentials).then(data=>{
-                this.errMsg = null
-                commit("setUserData",data);
-            })
-            .catch( err => {
-                commit("setErrorData", err.response.data.error);
-            })
-        },
-        logout({ commit }) {
-            // return axios.post("/auth/logout", credentials).then(() => {
-            //     commit("setUserData", null);
-            // });
-            commit("setUserData", null)
-            commit("setErrorData",null)
-        },
-        cancel({ commit }) {
+        /**
+         * cancel
+         * @return
+         */
+        cancel({
+            commit
+        }) {
             commit("setApplicantData", null);
-            commit("setImgFile", null)
-        }
-    },  
+            commit("setImgFile", null);
+        },
+    },
     getters: {
         isData: (state) => !!state.applicantsData,
         isLoggedIn: (state) => !!state.user,
@@ -121,5 +159,3 @@ export default new Vuex.Store({
     },
     plugins: [createPersistedState()],
 });
-
-
