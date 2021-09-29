@@ -50,8 +50,8 @@ export default {
             }
         },
     },
-    mounted() {
-        this.SelectAll();
+    created() {
+        this.selectAllApplicant();
     },
     methods: {
         /**
@@ -74,7 +74,6 @@ export default {
             }
         },
         /**
-         * DeleteUser
          * This is to delete the applicant
          * @param {id} id The applicant id to delete
          * @returns void
@@ -85,7 +84,7 @@ export default {
                     .delete("/api/applicants/delete?id=" + id)
                     .then((resp) => {
                         if (resp) {
-                            this.SelectAll();
+                            this.selectAllApplicant();
                         }
                     })
                     .catch((error) => {
@@ -93,13 +92,16 @@ export default {
                     });
             }
         },
+
+        applicantDetail(id) {
+            this.$router.push(`/applicantinfo/${id}`);
+        },
         /**
-         * SelectAll()
          * This is to read all applicants from database.
          * @returns void
          */
-        SelectAll() {
-            this.$axios
+        selectAllApplicant() {
+            axios
                 .get("/api/applicants")
                 .then((response) => {
                     this.postList = response.data;

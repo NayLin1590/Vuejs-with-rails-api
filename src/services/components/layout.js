@@ -1,4 +1,6 @@
-import { mapGetters } from "vuex";
+import {
+    mapGetters
+} from "vuex";
 import constants from "../../constants";
 
 export default {
@@ -8,19 +10,20 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(["isLoggedIn", "userType", "userName"]),
+        ...mapGetters(["isLoggedIn", "userType", "userEmail"]),
     },
     methods: {
-      
         /**
-         * This is to log out from system.
+         * This is to log out from admin side.
          * @returns void
          */
         logout() {
             this.$store
                 .dispatch("logout")
                 .then(() => {
-                    this.$router.push({ name: "applicantform" });
+                    this.$router.push({
+                        name: "applicantform"
+                    });
                 })
                 .catch((err) => {
                     console.log(err);

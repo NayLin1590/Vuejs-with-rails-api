@@ -17,7 +17,7 @@ export default {
 
     methods: {
         /**
-         * This to submit login form.
+         * This to submit login form to admin side.
          * @returns void
          */
         login() {
@@ -26,19 +26,11 @@ export default {
                     email: this.email,
                     password: this.password
                 })
-                .then(() => {
-                    this.error = this.$store.state.errMsg;
-                    this.$router.push({
-                        name: "post-list"
-                    });
-                })
-                .catch(err => {
-                    this.error = "error testing";
-                    this.error = err.response.data.errors.message;
-                });
         }
     },
-    created() {
-        this.error = "";
-    },
+    computed: {
+        validateError() {
+            this.$store.state.errMsg
+        }
+    }
 };

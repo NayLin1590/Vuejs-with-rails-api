@@ -15,7 +15,7 @@
               <v-menu offset-y v-if="isLoggedIn">
                 <template v-slot:activator="{ on }">
                   <v-btn class="ma-2" text v-on="on">
-                    {{ userName }}
+                    {{ userEmail }}
                     <v-icon>arrow_drop_down</v-icon>
                   </v-btn>
                 </template>

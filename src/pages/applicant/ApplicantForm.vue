@@ -1,28 +1,25 @@
 <template>
   <validation-observer ref="observer" v-slot="{ invalid }">
-    <form @submit.prevent="submit">
-      <v-card class="mx-auto mb-3" max-width="960">
+    <form @submit.prevent="submitApplicantForm">
+      <v-card class="mx-auto mb-3" max-width="900">
         <!-- Personal Information -->
         <div class="personalInformation">
-          <v-alert
-            class="white--text"
-            color="cyan"
-            dark
-            border="left"
-            elevation="4"
-            icon="mdi-account"
-          >
-            <h3>Personal Information</h3>
-          </v-alert>
+          <v-card-title class="cyan white--text">
+            <v-icon class="ml-4 mr-2" color="white"> mdi-account</v-icon
+            >Personal Information
+          </v-card-title>
           <div class="px-10">
             <validation-provider
               v-slot="{ errors }"
               name="Name"
-              rules="required|max:50"
+              :rules="{
+                required: true,
+                max: textlength.FIFTY,
+              }"
             >
               <v-text-field
                 v-model="user.name"
-                :counter="50"
+                :counter="textlength.FIFTY"
                 :error-messages="errors"
                 label="Name"
                 required
@@ -33,17 +30,17 @@
             <validation-provider
               v-slot="{ errors }"
               name="profilePhoto"
-              rules="image"
+              rules="image|size:5120"
             >
               <v-file-input
                 v-model="user.profilePhoto"
                 :error-messages="errors"
                 chips
                 truncate-length="20"
-                prepend-icon=""
-                accept="image/png, image/jpeg, image/bmp"
+                prepend-icon="mdi-camera"
+                accept="image/*"
                 label="Profile Photo"
-                @change="onAddFiles"
+                @change="addFile"
               >
               </v-file-input>
             </validation-provider>
@@ -82,7 +79,7 @@
                       .substr(0, 10)
                   "
                   min="1990-01-01"
-                  @change="save"
+                  @change="inputDate"
                 ></v-date-picker>
               </v-menu>
             </div>
@@ -123,7 +120,10 @@
             <validation-provider
               v-slot="{ errors }"
               name="currentAddress"
-              rules="required"
+              :rules="{
+                required:true,
+                max:textlength.TWOFIVEFIVE
+                }"
             >
               <v-textarea
                 no-resize
@@ -132,43 +132,49 @@
                 label="Current Address"
                 :error-messages="errors"
                 required
+                :counter="textlength.TWOFIVEFIVE"
               ></v-textarea>
             </validation-provider>
-
-            <v-textarea
-              no-resize
-              v-model="user.hometownAddress"
-              rows="3"
-              label="Hometown Address"
+            <validation-provider
+              v-slot="{ errors }"
+              name="hometownAddress"
+              :rules="{
+                max:textlength.TWOFIVEFIVE
+                }"
             >
-            </v-textarea>
+              <v-textarea
+                no-resize
+                v-model="user.hometownAddress"
+                rows="3"
+                label="Hometown Address"
+                :error-messages="errors"
+                :counter="textlength.TWOFIVEFIVE"
+              >
+              </v-textarea>
+            </validation-provider>
           </div>
         </div>
 
         <!-- Education Background -->
         <div class="educationBackground pt-5">
-          <v-alert
-            class="white--text"
-            color="cyan"
-            dark
-            border="left"
-            elevation="4"
-            icon="mdi-school"
-          >
-            <h3>Education Background</h3>
-          </v-alert>
-
+          <v-card-title class="cyan white--text">
+            <v-icon class="ml-4 mr-2" color="white"> mdi-school</v-icon
+            >Education Background
+          </v-card-title>
           <div class="px-10">
             <v-row>
               <v-col cols="4">
                 <validation-provider
                   v-slot="{ errors }"
                   name="bachelorUni"
-                  rules="required|max:50"
+                  :rules="{
+                    required: true,
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.bachelorUni"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Bachelor University"
                   ></v-text-field>
@@ -178,11 +184,13 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="BachelorYear"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.bachelorYear"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Bachelor Year"
                   ></v-text-field>
@@ -192,11 +200,13 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="BachelorDegree"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.bachelorDegree"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Bachelor Degree"
                   ></v-text-field>
@@ -209,11 +219,13 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="BachelorUni"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.masterUni"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Master University"
                   >
@@ -224,11 +236,13 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="BachelorYear"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.masterYear"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Master Year"
                   >
@@ -239,11 +253,13 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="BachelorDegree"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.masterDegree"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Master Degree"
                   ></v-text-field>
@@ -254,19 +270,32 @@
             <validation-provider
               v-slot="{ errors }"
               name="diplomaName"
-              rules="max:250"
+              :rules="{
+                max:textlength.TWOFIVEFIVE
+                }"
             >
               <v-text-field
                 v-model="user.diplomaName"
-                :counter="250"
+                :counter="textlength.TWOFIVEFIVE"
                 :error-messages="errors"
                 label="Diploma Name"
               >
               </v-text-field>
             </validation-provider>
 
-            <validation-provider name="certificate">
-              <v-text-field v-model="user.certificate" label="Certificates">
+            <validation-provider
+              v-slot="{ errors }"
+              name="certificate"
+              :rules="{
+                max:textlength.TWOFIVEFIVE
+                }"
+            >
+              <v-text-field
+                v-model="user.certificate"
+                :counter="textlength.TWOFIVEFIVE"
+                :error-messages="errors"
+                label="Certificates"
+              >
               </v-text-field>
             </validation-provider>
 
@@ -275,12 +304,14 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="programmingLang"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.programmingLang"
                     placeholder="Ruby"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Programming Language"
                   >
@@ -291,12 +322,14 @@
                 <validation-provider
                   v-slot="{ errors }"
                   name="programmingLevel"
-                  rules="max:50"
+                  :rules="{
+                    max: textlength.FIFTY,
+                  }"
                 >
                   <v-text-field
                     v-model="user.programmingLevel"
                     placeholder="B"
-                    :counter="50"
+                    :counter="textlength.FIFTY"
                     :error-messages="errors"
                     label="Programming  Level"
                   ></v-text-field>
@@ -307,11 +340,13 @@
             <validation-provider
               v-slot="{ errors }"
               name="english"
-              rules="max:250"
+              :rules="{
+                max:textlength.TWOFIVEFIVE
+                }"
             >
               <v-text-field
                 v-model="user.english"
-                :counter="250"
+                :counter="textlength.TWOFIVEFIVE"
                 :error-messages="errors"
                 label="English Language Level"
               >
@@ -321,11 +356,13 @@
             <validation-provider
               v-slot="{ errors }"
               name="japanese"
-              rules="max:250"
+              :rules="{
+              max:textlength.TWOFIVEFIVE
+              }"
             >
               <v-text-field
                 v-model="user.japanese"
-                :counter="250"
+                :counter="textlength.TWOFIVEFIVE"
                 :error-messages="errors"
                 label="Japanese Language Level"
               >
@@ -335,11 +372,13 @@
             <validation-provider
               v-slot="{ errors }"
               name="otherLang"
-              rules="max:250"
+              :rules="{
+              max:textlength.TWOFIVEFIVE
+              }"
             >
               <v-text-field
                 v-model="user.otherLang"
-                :counter="250"
+                :counter="textlength.TWOFIVEFIVE"
                 :error-messages="errors"
                 label="Other Language Level"
               >
@@ -350,16 +389,10 @@
 
         <!-- Experience -->
         <div class="educationBackground pt-5">
-          <v-alert
-            class="white--text"
-            color="cyan"
-            dark
-            border="left"
-            elevation="4"
-            icon="mdi-briefcase"
-          >
-            <h3>Experience</h3>
-          </v-alert>
+          <v-card-title class="cyan white--text">
+            <v-icon class="ml-4 mr-2" color="white"> mdi-briefcase</v-icon
+            >Experience
+          </v-card-title>
           <div class="px-10">
             <v-checkbox
               v-model="user.hasJobExp"
@@ -400,13 +433,13 @@
           </div>
         </div>
 
-        <div class="errorMsg" :v-if="validateError">
-          <div v-for="(err, index) in validateError" :key="index">
+        <div class="errorMsg" :v-if="validationError">
+          <div v-for="(err, index) in validationError" :key="index">
             <p>- {{ index + " : " + err[0] }}</p>
           </div>
         </div>
         <div class="text-center mt-5 pb-10">
-          <v-btn @click="clear" class="mr-4">
+          <v-btn @click="resetApplicantForm" class="mr-4">
             Reset
           </v-btn>
           <v-btn type="submit" :disabled="invalid">
@@ -418,8 +451,6 @@
   </validation-observer>
 </template>
 
-<script src="../../services/pages/applicant/applicant-form.js">
-</script>
+<script src="../../services/pages/applicant/applicant-form.js"></script>
 
-<style scoped src="../../assets/css/pages/applicant/applicant-form.css">
-</style>
+<style scoped src="../../assets/css/pages/applicant/applicant-form.css"></style>

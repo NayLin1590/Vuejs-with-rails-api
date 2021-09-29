@@ -7,10 +7,10 @@ export default {
     },
     methods: {
         /**
-         * This is submit to save the data
+         * This is submit to save the Applicant Data
          * @returns void
          */
-        submit() {
+        confirmApplicantForm() {
             let formData = new FormData();
             if (this.applicantInfo.profilePhoto !== null) {
                 formData.append("imgfile", this.applicantInfo.profilePhoto);
@@ -32,8 +32,8 @@ export default {
          * This is cancel 'form submittion'
          * @returns void
          */
-        cancel() {
-            this.$store.dispatch("cancel");
+        cancelApplicantForm() {
+            this.$store.dispatch("cancelApplicant");
             this.$router.push({
                 name: "applicantform"
             });

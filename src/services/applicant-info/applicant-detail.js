@@ -7,12 +7,16 @@ export default {
             applicant: {},
         };
     },
-    created() {
+    beforeCreate() {
         axios.get(`/api/applicants/detail?id=${this.$route.params.id}`)
             .then((applicantData) => {
                 this.dob = applicantData.data.dob;
                 this.applicant = applicantData.data.applicant;
             })
-            .catch();
+            .catch(err => {
+                if (err) {
+                    this.applicant = null
+                }
+            });
     },
 };

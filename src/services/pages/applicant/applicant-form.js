@@ -6,6 +6,7 @@ import {
     regex,
     numeric,
     image,
+    size
 } from "vee-validate/dist/rules";
 import {
     extend,
@@ -13,7 +14,7 @@ import {
     ValidationProvider,
     setInteractionMode,
 } from "vee-validate";
-
+import constants from "../../../constants";
 setInteractionMode("eager");
 extend("numeric", numeric);
 extend("digits", {
@@ -23,6 +24,10 @@ extend("digits", {
 extend("image", {
     ...image,
     message: "{_field_} please select img type",
+});
+extend("size", {
+    ...size,
+    message: `file size is grater than {size} kb`,
 });
 extend("required", {
     ...required,
@@ -50,6 +55,7 @@ export default {
         ValidationObserver,
     },
     data: () => ({
+        textlength: constants.TEXT_LENGTH,
         user: {
             name: "",
             profilePhoto: null,
@@ -74,7 +80,7 @@ export default {
             internshipInfo: "",
             jobExperience: "",
             totalExperience: "",
-            hasJobExp: "",
+            hasJobExp: false,
         },
         validateError: null,
         menu: false,
@@ -82,48 +88,41 @@ export default {
 
     methods: {
         /**
-         * onAddFiles
          * This is to add img file to the imgFile[] state of store.
          * @param {file} file The selected file from file-field
          * @returns void
          */
-        onAddFiles(file) {
+        addFile(file) {
             if (file) {
-                const reader = new FileReader();
-                reader.addEventListener("load", (e) =>
-                    this.$store.dispatch("imgFile", e.target.result)
-                );
-                reader.addEventListener("error", () =>
-                    this.$store.dispatch("imgFile", "error")
-                );
-                reader.readAsDataURL(file);
+                if (file.size <= 5120 * 1024) { //file size is <= 10Mb
+                    const reader = new FileReader();
+                    reader.addEventListener("load", (e) =>
+                        this.$store.dispatch("createImgFile", e.target.result)
+                    );
+                    reader.addEventListener("error", () =>
+                        this.$store.dispatch("createImgFile", "error")
+                    );
+                    reader.readAsDataURL(file);
+                } else {
+                    this.$store.dispatch("createImgFile", null);
+                }
             } else {
-                this.$store.dispatch("imgFile", null);
+                this.$store.dispatch("createImgFile", null);
             }
         },
         /**
-         * This is date field function of UI.
-         */
-        save(date) {
-            this.$refs.menu.save(date);
-        },
-        /**
-         * submit
-         * This is submit to check the form for validate 
+         * This is to check the form for validate and push to confirm route
          * @returns void
          */
-        submit() {
+        submitApplicantForm() {
             this.$refs.observer.validate();
-            this.$store.dispatch("confirm", this.user).then(() => {
-                this.validateError = this.$store.state.userValidationErrors;
-            });
+            this.$store.dispatch("validateApplicant", this.user)
         },
         /**
-         * clear
          * This is to clear all data in input field 
          * @returns void
          */
-        clear() {
+        resetApplicantForm() {
             var self = this;
             Object.keys(this.user).forEach(function (key) {
                 self.user[key] = "";
@@ -132,8 +131,21 @@ export default {
             this.user.profilePhoto = null;
             this.$refs.observer.reset();
         },
+        /**
+         * This is date field function of UI.
+         * @param { date } date the date for dob field
+         * @reutrns null
+         */
+        inputDate(date) {
+            this.$refs.menu.save(date);
+        },
     },
     created() {
         this.$store.state.userValidationErrors = null;
     },
+    computed: {
+        validationError() {
+            return this.$store.state.userValidationErrors
+        }
+    }
 };

@@ -3,7 +3,7 @@
     <v-banner elevation="3" fab dark color="cyan">Login</v-banner>
     <v-form ref="form" v-model="valid" @submit.prevent="login">
       <v-card-text>
-        <div class="login-error">{{ error }}</div>
+        <div class="login-error">{{ validateError }}</div>
         <div class="login-input">
           <v-text-field
             v-model="email"

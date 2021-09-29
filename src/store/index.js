@@ -17,18 +17,43 @@ export default new Vuex.Store({
         imgFile: [],
     },
     mutations: {
+        /**
+         * set user data to user state for login to enter dashboard
+         * @param {*} state 
+         * @param { object } userData email & password to login
+         */
         setUserData(state, userData) {
             state.user = userData;
         },
+        /**
+         * set error message if the login fail
+         * @param {*} state 
+         * @param { object } errMsg error message for login validation fail
+         */
         setErrorData(state, errMsg) {
             state.errMsg = errMsg;
         },
+        /**
+         * set all the applicants data to "applicantsData" state to show the admin
+         * @param {*} state 
+         * @param { object } applicantsData all applicant data from database
+         */
         setApplicantData(state, applicantsData) {
             state.applicantsData = applicantsData;
         },
+        /**
+         * set the error message if the submit applicant data is invalid
+         * @param {*} state 
+         * @param { object } error error message for applicant data validation fail
+         */
         setValidateError(state, error) {
             state.userValidationErrors = error;
         },
+        /**
+         * set the image file to show the confirm form 
+         * @param {*} state 
+         * @param {*} imgFile image file from user input
+         */
         setImgFile(state, imgFile) {
             state.imgFile = imgFile;
         },
@@ -36,16 +61,16 @@ export default new Vuex.Store({
 
     actions: {
         /**
-         * createApplicant
          * This is to create applicant and push route to 'done'
+         * @param { * } commit
          * @param {object} formData the applicant value to save
-         * @return
+         * @returns void
          */
         createApplicant({
             commit
         }, formData) {
             try {
-                return axios
+                axios
                     .post("/api/applicants/create", formData)
                     .then((data) => {
                         if (data) {
@@ -59,21 +84,22 @@ export default new Vuex.Store({
                     .catch((err) => {
                         console.log(err);
                     });
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
             }
         },
+
         /**
-         * confirm
-         * this is to confirm applicant data before save and push route to confirm
-         * @param {object} applicantData the all info of submit applicant
-         * @return
+         * this is to confirm applicant data before save and push route after confirm
+         * @param {*} commit to mutate the applicant data
+         * @param { object } applicantData all information of the new applicant
+         * @returns void
          */
-        confirm({
+        validateApplicant({
             commit
         }, applicantData) {
-            return axios
-                .post("api/applicants/confirm", applicantData)
+            axios
+                .post("api/applicants/validate", applicantData)
                 .then((data) => {
                     if (data) {
                         commit("setApplicantData", applicantData);
@@ -88,36 +114,42 @@ export default new Vuex.Store({
                 });
         },
         /**
-         * imgFile
-         * this is to store img file to the stae
-         * @param {object} imgFile the img file of user
-         * @return
+         * this is to create img file for confirm UI
+         * @param {*} commit to mutate the img file
+         * @param {object} imgFile the img file of the new applicant submittion
+         * @returns void
          */
-        imgFile({
+        createImgFile({
             commit
         }, imgFile) {
             commit("setImgFile", imgFile);
         },
         /**
-         * login
-         * @return
+         * to get the userdata and token 
+         * @param {*} commit 
+         * @param { object } credentials user information to login
+         * @returns void
          */
         login({
             commit
-        }, credentials) {
-            return axios
-                .post("/auth/login", credentials)
+        }, userData) {
+            axios
+                .post("/auth/login", userData)
                 .then((data) => {
-                    this.errMsg = null;
+                    commit("setErrorData", null);
                     commit("setUserData", data);
+                    router.push({
+                        name: "applicant-list",
+                    });
                 })
                 .catch((err) => {
                     commit("setErrorData", err.response.data.error);
                 });
         },
         /**
-         * Logout
-         * @return
+         * to set null data 
+         * @param {*} commit to mutate the userData 
+         * @returns void
          */
         logout({
             commit
@@ -126,10 +158,11 @@ export default new Vuex.Store({
             commit("setErrorData", null);
         },
         /**
-         * cancel
-         * @return
+         * to set null data 
+         * @param {*} commit to mutate applicant data and img file
+         * @returns void
          */
-        cancel({
+        cancelApplicant({
             commit
         }) {
             commit("setApplicantData", null);
@@ -150,8 +183,7 @@ export default new Vuex.Store({
                 return state.user.data.user_id;
             }
         },
-        userName: (state) => {
-            // console.log(state)
+        userEmail: (state) => {
             if (state.user && state.user.data.user.email) {
                 return state.user.data.user.email;
             }
